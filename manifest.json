@@ -1,0 +1,44 @@
+{
+    "version": "0.1",
+    "manifest_version": 2,
+    "name": "FuzzyTabs",
+    "description": "A quick and convenient fuzzy tab search.",
+    "icons": {
+        "48": "icons/icon-48.png",
+        "96": "icons/icon-96.png"
+    },
+    "applications": {
+        "gecko": {
+            "strict_min_version": "58.0a1"
+        }
+    },
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "browser_action": {
+        "browser_style": false,
+        "default_title": "FuzzyTabs",
+        "default_popup": "tabs.html",
+        "default_icon": {
+            "48": "icons/icon-48.png",
+            "96": "icons/icon-96.png"
+        }
+    },
+    "homepage_url": "https://www.musicnate.ca/Ctrl-T",
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "sessions",
+        "bookmarks"
+    ],
+    "commands": {
+        "_execute_browser_action": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+F"
+            },
+            "description": "Execute this extension."
+        }
+    }
+}
