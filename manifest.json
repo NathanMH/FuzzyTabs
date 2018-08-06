@@ -7,14 +7,10 @@
         "48": "icons/icon-48.png",
         "96": "icons/icon-96.png"
     },
-    "applications": {
-        "gecko": {
-            "strict_min_version": "58.0a1"
-        }
-    },
     "background": {
         "scripts": [
-            "background.js"
+            "background.js",
+            "tabs.js"
         ]
     },
     "browser_action": {
@@ -26,7 +22,7 @@
             "96": "icons/icon-96.png"
         }
     },
-    "homepage_url": "https://www.musicnate.ca/Ctrl-T",
+    "homepage_url": "https://www.musicnate.ca/FuzzyTabs",
     "permissions": [
         "tabs",
         "activeTab",

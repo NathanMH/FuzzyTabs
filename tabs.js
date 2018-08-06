@@ -1,7 +1,12 @@
-
 var resultsTabsList = document.getElementById('tabs-list');
 var tabsObjects = [];
 var bookmarksObjects = [];
+
+window.browser = (function () {
+    return window.msBrowser ||
+        window.browser ||
+        window.chrome;
+})();
 
 function searchResultTabs() {
     resultsTabsList.textContent = '';
@@ -28,7 +33,7 @@ function searchResultTabs() {
         } else if (bookmarksTitles.includes(fuzzyResultsAll[i].target)) {
             // retrieve bookmark object from bookmarksObjects with matching title
             var currTab = bookmarksObjects.filter(obj => obj.title === fuzzyResultsAll[i].target);
-            console.log(currTab);
+            // console.log(currTab);
             tabLink.textContent = currTab[0].title || currTab[0].id;
             tabLink.setAttribute('href', currTab[0].url);
             tabLink.setAttribute('window', currTab[0].winId);
@@ -40,22 +45,23 @@ function searchResultTabs() {
         resultsTabsList.appendChild(tabLink);
         colourFirst();
     }
-    // });
-}
 
-// Do this whenever the text box changes
-onload = function (e) {
-    getTabs();
-    getBookmarks();
-
-    // Switch to first item with Enter
-    var input = document.getElementById("find-input");
+    // Switch to first item with Enter (ie. don't put <CR> into text box)
     document.getElementById("find-input").onkeydown = function (e) {
         if (e.keyCode === 13) {
             e.preventDefault();
             document.getElementById("tabs-list").firstChild.click();
         }
     }
+}
+
+document.addEventListener("DOMContentLoaded", function (e) {
+
+    getTabs();
+    getBookmarks();
+
+    // Do this whenever the text box changes
+    var input = document.getElementById("find-input");
     input.oninput = searchResultTabs;
 
     // Focus on the input box on load
@@ -73,8 +79,7 @@ onload = function (e) {
             active: true
         });
     });
-
-};
+});
 
 // Make the first link coloured on load, then uncoloured whe focus lost
 function focusLost() {
@@ -114,13 +119,17 @@ function getBookmarks() {
     function logTree(bookmarkItems) {
         logItems(bookmarkItems[0]);
     }
-    var gettingTree = browser.bookmarks.getTree();
-    gettingTree.then(logTree);
+
+    browser.bookmarks.getTree(logTree);
+
+    // var gettingTree = browser.bookmarks.getTree();
+    // gettingTree.then(logTree);
 }
 
 function getTabs() {
     tabsObjects = [];
-    browser.tabs.query({}).then((tabs) => {
+    browser.tabs.query({}, function (tabs) {
+        // browser.tabs.query({}).then((tabs) => {
         for (let tab of tabs) {
             tabsObjects.push({
                 title: tab.title,
