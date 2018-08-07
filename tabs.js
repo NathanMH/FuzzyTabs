@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function (e) {
     });
 });
 
-// Make the first link coloured on load, then uncoloured whe focus lost
+// Make the first link coloured on load, then uncoloured when focus lost
 function focusLost() {
     document.getElementById("tabs-list").firstChild.style.backgroundColor = "white";
     document.getElementById("tabs-list").firstChild.style.color = "black";
@@ -93,7 +93,7 @@ function focusGained() {
     document.getElementById("tabs-list").firstChild.style.border = "4px solid #0060DF";
 }
 
-// Make the first link coloured on load, then uncoloured whe focus lost
+// Make the first link coloured on load, then uncoloured when focus lost
 function colourFirst() {
     document.getElementById("tabs-list").firstChild.addEventListener("focusout", focusLost);
     document.getElementById("tabs-list").firstChild.addEventListener("focus", focusGained);
