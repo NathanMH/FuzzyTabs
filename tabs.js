@@ -9,6 +9,7 @@ window.browser = (function () {
 })();
 
 function searchResultTabs() {
+    console.log("search working");
     resultsTabsList.textContent = '';
 
     let tabsTitles = tabsObjects.map(a => a.title);
@@ -20,6 +21,7 @@ function searchResultTabs() {
 
 
     for (i in fuzzyResultsAll) {
+        console.log(i);
         let tabLink = document.createElement('a');
 
         if (tabsTitles.includes(fuzzyResultsAll[i].target)) {
@@ -29,15 +31,15 @@ function searchResultTabs() {
             tabLink.setAttribute('href', currTab[0].id);
             tabLink.setAttribute('window', currTab[0].winId);
             tabLink.classList.add('open-tab-link');
-            // console.log(tabLink);
+            console.log(tabLink);
         } else if (bookmarksTitles.includes(fuzzyResultsAll[i].target)) {
             // retrieve bookmark object from bookmarksObjects with matching title
             var currTab = bookmarksObjects.filter(obj => obj.title === fuzzyResultsAll[i].target);
-            // console.log(currTab);
             tabLink.textContent = currTab[0].title || currTab[0].id;
             tabLink.setAttribute('href', currTab[0].url);
             tabLink.setAttribute('window', currTab[0].winId);
             tabLink.classList.add('bookmark-link');
+            console.log(tabLink);
         } else {
             console.log("no known tab");
         }
@@ -48,6 +50,7 @@ function searchResultTabs() {
 
     // Switch to first item with Enter (ie. don't put <CR> into text box)
     document.getElementById("find-input").onkeydown = function (e) {
+        // if (e.keyCode === 13 && document.getElementById("find-input").hasFocus()) {
         if (e.keyCode === 13) {
             e.preventDefault();
             document.getElementById("tabs-list").firstChild.click();
@@ -62,20 +65,23 @@ document.addEventListener("DOMContentLoaded", function (e) {
 
     // Do this whenever the text box changes
     var input = document.getElementById("find-input");
-    input.oninput = searchResultTabs;
-
-    // Focus on the input box on load
-    document.getElementById("find-input").focus();
+    if (input != null) {
+        input.oninput = searchResultTabs;
+        // Focus on the input box on load
+        document.getElementById("find-input").focus();
+    }
 
     // Click on link to switch to that tab/window
     document.addEventListener("click", (e) => {
         var tabId = +e.target.getAttribute('href');
         var winId = +e.target.getAttribute('window');
 
-        browser.windows.update(winId, {
+        // browser.windows.update(winId, {
+        browser.windows.update(129, {
             focused: true
         });
-        browser.tabs.update(tabId, {
+        // browser.tabs.update(tabId, {
+        browser.tabs.update(146, {
             active: true
         });
     });
@@ -121,9 +127,6 @@ function getBookmarks() {
     }
 
     browser.bookmarks.getTree(logTree);
-
-    // var gettingTree = browser.bookmarks.getTree();
-    // gettingTree.then(logTree);
 }
 
 function getTabs() {
@@ -131,6 +134,9 @@ function getTabs() {
     browser.tabs.query({}, function (tabs) {
         // browser.tabs.query({}).then((tabs) => {
         for (let tab of tabs) {
+            console.log(tab.title);
+            console.log(tab.id);
+            console.log(tab.windowId);
             tabsObjects.push({
                 title: tab.title,
                 url: tab.url,
