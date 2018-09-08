@@ -10,7 +10,7 @@ Will open tabs in other windows
 
 * Usage:
 
-  1. Default keybinding is Ctrl-Shift-F
+  1. Default keybinding is Alt-Shift-F
   2. Seach for keywords, snippets, or any string in a tab title
   3. Enter key will automatically open the first result
   4. Use the tab key to focus the item and enter to select (or just use the mouse!)
