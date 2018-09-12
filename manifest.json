@@ -1,5 +1,5 @@
 {
-    "version": "0.1",
+    "version": "0.2",
     "manifest_version": 2,
     "name": "FuzzyTabs",
     "description": "A quick and convenient fuzzy tab search.",
@@ -27,12 +27,14 @@
         "tabs",
         "activeTab",
         "sessions",
-        "bookmarks"
+        "bookmarks",
+        "menus"
     ],
     "commands": {
         "_execute_browser_action": {
             "suggested_key": {
-                "default": "Alt+Shift+F"
+                // "default": "Ctrl+Shift+F"
+                "default": "F2"
             },
             "description": "Execute this extension."
         }
