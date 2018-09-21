@@ -3,6 +3,11 @@
     "manifest_version": 2,
     "name": "FuzzyTabs",
     "description": "A quick and convenient fuzzy tab search.",
+    "applications": {
+        "gecko": {
+            "id": "addon@example.com"
+        }
+    },
     "icons": {
         "48": "icons/icon-48.png",
         "96": "icons/icon-96.png"
@@ -22,18 +27,21 @@
             "96": "icons/icon-96.png"
         }
     },
+    "options_ui": {
+        "page": "options.html"
+    },
     "homepage_url": "https://www.musicnate.ca/FuzzyTabs",
     "permissions": [
         "tabs",
         "activeTab",
         "sessions",
         "bookmarks",
-        "menus"
+        "menus",
+        "storage"
     ],
     "commands": {
         "_execute_browser_action": {
             "suggested_key": {
-                // "default": "Ctrl+Shift+F"
                 "default": "F2"
             },
             "description": "Execute this extension."
