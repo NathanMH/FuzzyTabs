@@ -7,7 +7,7 @@ window.browser = (function () {
         window.chrome;
 })();
 
-function setOptColor(result) {
+function setOptions(result) {
     bookmarkBackgroundColor = result.bookmarkBackgroundColor;
     bookmarkTextColor = result.bookmarkTextColor;
     // bookmarkBorderColor = result.bookmarkBorderColor;
@@ -19,6 +19,8 @@ function setOptColor(result) {
     focusItemBackgroundColor = result.focusItemBackgroundColor;
     focusItemTextColor = result.focusItemTextColor;
     focusItemBorderColor = result.focusItemBorderColor;
+
+    scoreThreshold = result.scoreThreshold;
 }
 
 var getting = browser.storage.sync.get([
@@ -32,24 +34,25 @@ var getting = browser.storage.sync.get([
 
     "focusItemBackgroundColor",
     "focusItemTextColor",
-    "focusItemBorderColor"
+    "focusItemBorderColor",
+    "scoreThreshold"
 ]);
 
-getting.then(setOptColor);
+getting.then(setOptions);
 
 function searchResultTabs() {
+    console.log(tabsObjects);
 
     resultsTabsList.textContent = '';
     let searchQuery = document.getElementById("find-input").value;
 
     // Get matching tabs TODO Add option to customize threshold for scores
+    // console.log(scoreThreshold);
     fuzzyResultsAll = fuzzysort.go(searchQuery, tabsObjects.map(a => a.title), { threshold: -200 });
 
-
     tabLink = document.createElement('a');
-    // First Link in list(for special colouring)
 
-    for (i in fuzzyResultsAll.slice(1)) {
+    for (i in fuzzyResultsAll) {
         currentTab = tabsObjects[tabsObjects.findIndex(x => x.title === fuzzyResultsAll[i].target)];
 
         let link = new TabLink(currentTab);
@@ -180,6 +183,7 @@ class TabLink {
             this.link.onfocus = focusItem;
             this.link.onmouseleave = restoreBookmark;
             this.link.onblur = restoreBookmark
+            // console.log(this.link);
 
         } else if (!tabObject.bookmark) {
 

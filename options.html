@@ -4,6 +4,7 @@
 
 <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="options.css" />
 </head>
 
 <body>
@@ -50,6 +51,12 @@
     <form>
         <label>Focused Item Border Color<input type="text" id="focusItemBorderColor"></label>
     </form>
+
+    <div class="slidecontainer">
+        <p>Fuzzy Score Threshold:</p>
+        <input type="range" min="1" max="10000" class="slider" list="tickmarks" id="rangeInput">
+        <input type="text" id="scoreThreshold" value="">
+    </div>
 
     <hr>
 

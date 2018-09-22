@@ -12,6 +12,8 @@ function saveOptions(e) {
         focusItemBackgroundColor: document.querySelector("#focusItemBackgroundColor").value,
         focusItemBorderColor: document.querySelector("#focusItemBorderColor").value,
         focusItemTextColor: document.querySelector("#focusItemTextColor").value,
+
+        scoreThreshold: document.querySelector("#scoreThreshold").value
     });
 }
 
@@ -30,6 +32,7 @@ function restoreOptions() {
         document.querySelector("#focusItemTextColor").value = result.focusItemTextColor || "black";
         document.querySelector("#focusItemBorderColor").value = result.focusItemBorderColor || "#0060DF";
 
+        document.querySelector("#scoreThreshold").value = result.scoreThreshold || "5000";
     }
 
     var getting = browser.storage.sync.get([
@@ -43,7 +46,9 @@ function restoreOptions() {
 
         "focusItemBackgroundColor",
         "focusItemTextColor",
-        "focusItemBorderColor"
+        "focusItemBorderColor",
+
+        "scoreThreshold"
     ]);
     getting.then(setCurrentChoice);
 
@@ -63,6 +68,8 @@ function resetOptions() {
     document.querySelector("#focusItemTextColor").value = "black";
     document.querySelector("#focusItemBorderColor").value = "#0060DF";
 
+    document.querySelector("#scoreThreshold").value = "5000";
+
     browser.storage.sync.set({
         bookmarkBackgroundColor: "#CEE5F8",
         bookmarkTextColor: "black",
@@ -74,10 +81,21 @@ function resetOptions() {
 
         focusItemBackgroundColor: "white",
         focusItemTextColor: "black",
-        focusItemBorderColor: "#0060DF"
+        focusItemBorderColor: "#0060DF",
+
+        scoreThreshold: "5000"
     });
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.getElementById("save").addEventListener("click", saveOptions);
 document.getElementById("reset").addEventListener("click", resetOptions);
+
+// Threshold for fuzzy matching
+function update() {
+    textInput.value = this.value;
+}
+var textInput = document.getElementById("scoreThreshold");
+var rangeInput = document.getElementById("rangeInput");
+rangeInput.addEventListener('change', update);
+update.call(rangeInput); // first run
