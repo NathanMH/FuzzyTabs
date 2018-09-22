@@ -1,6 +1,5 @@
 var resultsTabsList = document.getElementById('tabs-list');
 var tabsObjects = [];
-var bookmarksObjects = [];
 
 window.browser = (function () {
     return window.msBrowser ||
@@ -39,125 +38,28 @@ var getting = browser.storage.sync.get([
 getting.then(setOptColor);
 
 function searchResultTabs() {
-    // console.log("search working");
+
     resultsTabsList.textContent = '';
-
-    let tabsTitles = tabsObjects.map(a => a.title);
-    let bookmarksTitles = bookmarksObjects.map(a => a.title);
-    let allTitles = tabsTitles.concat(bookmarksTitles);
-
     let searchQuery = document.getElementById("find-input").value;
-    // TODO Add option to customize threshold for scores
-    let fuzzyResultsAll = fuzzysort.go(searchQuery, allTitles, { threshold: -200 });
-    // console.log(fuzzyResultsAll);
+
+    // Get matching tabs TODO Add option to customize threshold for scores
+    fuzzyResultsAll = fuzzysort.go(searchQuery, tabsObjects.map(a => a.title), { threshold: -200 });
+
 
     tabLink = document.createElement('a');
-    if (tabsTitles.includes(fuzzyResultsAll[0].target)) {
-        tabLink.style.backgroundColor = openTabsBackgroundColor;
-        tabLink.style.color = openTabsTextColor;
-        tabLink.style.border = "4px solid " + focusItemBorderColor;
-        var currTab = tabsObjects.filter(obj => obj.title === fuzzyResultsAll[0].target);
-        tabLink.textContent = currTab[0].title.slice(0, 64);
-        tabLink.setAttribute('href', currTab[0].id);
-        tabLink.setAttribute('window', currTab[0].winId);
-        tabLink.setAttribute('score', fuzzyResultsAll[0].score);
-        tabLink.classList.add('open-tab-link');
-        tabLink.onmouseenter = function () {
-            this.style.backgroundColor = focusItemBackgroundColor;
-            this.style.color = focusItemTextColor;
-            this.style.border = "4px solid " + focusItemBorderColor;
-        };
-        tabLink.onmouseleave = function () {
-            this.style.backgroundColor = openTabsBackgroundColor;
-            this.style.color = openTabsTextColor;
-            this.style.border = "";
-        };
-    } else if (bookmarksTitles.includes(fuzzyResultsAll[0].target)) {
-        tabLink.style.backgroundColor = bookmarkBackgroundColor;
-        tabLink.style.color = bookmarkTextColor;
-        tabLink.style.border = "4px solid " + focusItemBorderColor;
-        var currTab = bookmarksObjects.filter(obj => obj.title === fuzzyResultsAll[0].target);
-        tabLink.textContent = currTab[0].title.slice(0, 64);
-        tabLink.setAttribute('href', currTab[0].url);
-        tabLink.setAttribute('window', currTab[0].winId);
-        tabLink.classList.add('bookmark-link');
-        tabLink.onfocus = function () {
-            this.style.backgroundColor = focusItemBackgroundColor;
-            this.style.color = focusItemTextColor;
-            this.style.border = "4px solid " + focusItemBorderColor;
-        };
-        tabLink.onmouseleave = function () {
-            this.style.backgroundColor = bookmarkBackgroundColor;
-            this.style.color = bookmarkTextColor;
-            this.style.border = "";
-        };
-
-    }
+    // First Link in list(for special colouring)
 
     for (i in fuzzyResultsAll.slice(1)) {
-        // console.log(i);
-        let tabLink = document.createElement('a');
+        currentTab = tabsObjects[tabsObjects.findIndex(x => x.title === fuzzyResultsAll[i].target)];
 
-        if (tabsTitles.includes(fuzzyResultsAll[i].target)) {
-            // Options
-            tabLink.style.backgroundColor = openTabsBackgroundColor;
-            tabLink.style.color = openTabsTextColor;
-
-            // retrieve tab object from tabsObjects with matching title
-            var currTab = tabsObjects.filter(obj => obj.title === fuzzyResultsAll[i].target);
-            tabLink.textContent = currTab[0].title.slice(0, 64);
-            tabLink.setAttribute('href', currTab[0].id);
-            tabLink.setAttribute('window', currTab[0].winId);
-            tabLink.setAttribute('score', fuzzyResultsAll[i].score);
-            tabLink.classList.add('open-tab-link');
-
-            tabLink.onfocus = function () {
-                this.style.backgroundColor = focusItemBackgroundColor;
-                this.style.color = focusItemTextColor;
-                this.style.border = "4px solid " + focusItemBorderColor;
-            };
-            tabLink.onfocusout = function () {
-                this.style.backgroundColor = openTabsBackgroundColor;
-                this.style.color = openTabsTextColor;
-                this.style.border = "";
-            };
-            // console.log(tabLink.getAttribute('score'));
-        } else if (bookmarksTitles.includes(fuzzyResultsAll[i].target)) {
-
-            // Bookmark Options
-            tabLink.style.backgroundColor = bookmarkBackgroundColor;
-            tabLink.style.color = bookmarkTextColor;
-
-            // retrieve bookmark object from bookmarksObjects with matching title
-            var currTab = bookmarksObjects.filter(obj => obj.title === fuzzyResultsAll[i].target);
-            tabLink.textContent = currTab[0].title.slice(0, 64);
-            tabLink.setAttribute('href', currTab[0].url);
-            tabLink.setAttribute('window', currTab[0].winId);
-            tabLink.classList.add('bookmark-link');
-
-            tabLink.onmouseenter = function () {
-                this.style.backgroundColor = focusItemBackgroundColor;
-                this.style.color = focusItemTextColor;
-                this.style.border = "4px solid " + focusItemBorderColor;
-            };
-            tabLink.onmouseleave = function () {
-                this.style.backgroundColor = bookmarkBackgroundColor;
-                this.style.color = bookmarkTextColor;
-                this.style.border = "";
-            };
-
-            // console.log(tabLink);
-        } else {
-            // console.log("no known tab");
-        }
+        let link = new TabLink(currentTab);
+        tabLink = link.getLink();
 
         resultsTabsList.appendChild(tabLink);
-        // colourFirst();
     }
 
     // Switch to first item with Enter (ie. don't put <CR> into text box)
     document.getElementById("find-input").onkeydown = function (e) {
-        // if (e.keyCode === 13 && document.getElementById("find-input").hasFocus()) {
         if (e.keyCode === 13) {
             e.preventDefault();
             document.getElementById("tabs-list").firstChild.click();
@@ -203,12 +105,12 @@ document.addEventListener("DOMContentLoaded", function (e) {
 });
 
 function getBookmarks() {
-    bookmarksObjects = [];
     function logItems(bookmarkItem) {
         if (bookmarkItem.url) {
-            bookmarksObjects.push({
+            tabsObjects.push({
                 title: bookmarkItem.title,
-                url: bookmarkItem.url
+                url: bookmarkItem.url,
+                bookmark: 1
             });
 
         }
@@ -230,33 +132,71 @@ function getTabs() {
     tabsObjects = [];
     browser.tabs.query({}, function (tabs) {
         for (let tab of tabs) {
-            // console.log(tab.title);
-            // console.log(tab.id);
-            // console.log(tab.windowId);
+            // console.log(tab.title + " : "  + tab.id + " : " + tab.windowId);
             tabsObjects.push({
                 title: tab.title,
                 url: tab.url,
                 id: tab.id,
-                winId: tab.windowId
+                winId: tab.windowId,
+                bookmark: 0
             });
         }
     })
 }
 
-// Make the first link coloured on load, then uncoloured when focus lost
-function focusLost() {
-    document.getElementById("tabs-list").firstChild.style.backgroundColor = "white";
-    document.getElementById("tabs-list").firstChild.style.color = "black";
-    document.getElementById("tabs-list").firstChild.style.border = "unset";
-}
-function focusGained() {
-    document.getElementById("tabs-list").firstChild.style.backgroundColor = "white";
-    document.getElementById("tabs-list").firstChild.style.color = "black";
-    document.getElementById("tabs-list").firstChild.style.border = "4px solid #0060DF";
+function focusItem() {
+    this.style.backgroundColor = focusItemBackgroundColor;
+    this.style.color = focusItemTextColor;
+    this.style.border = "4px solid " + focusItemBorderColor;
 }
 
-// Make the first link coloured on load, then uncoloured when focus lost
-function colourFirst() {
-    document.getElementById("tabs-list").firstChild.addEventListener("focusout", focusLost);
-    document.getElementById("tabs-list").firstChild.addEventListener("focus", focusGained);
+function restoreBookmark() {
+    this.style.backgroundColor = bookmarkBackgroundColor;
+    this.style.color = bookmarkTextColor;
+    this.style.border = "";
+}
+
+function restoreOpenTab() {
+    this.style.backgroundColor = openTabsBackgroundColor;
+    this.style.color = openTabsTextColor;
+    this.style.border = "";
+}
+
+class TabLink {
+
+    constructor(tabObject) {
+        this.link = document.createElement('a');
+
+        if (tabObject.bookmark) {
+
+            this.link.classList.add('bookmark-link');
+            this.link.textContent = tabObject.title.slice(0, 64);
+            this.link.setAttribute('href', tabObject.url);
+            this.link.setAttribute('window', tabObject.winId);
+
+            this.link.style.backgroundColor = bookmarkBackgroundColor;
+            this.link.style.color = bookmarkTextColor;
+            this.link.onmouseenter = focusItem;
+            this.link.onfocus = focusItem;
+            this.link.onmouseleave = restoreBookmark;
+            this.link.onblur = restoreBookmark
+
+        } else if (!tabObject.bookmark) {
+
+            this.link.classList.add('open-tab-link')
+            this.link.textContent = tabObject.title.slice(0, 64);
+            this.link.setAttribute('href', tabObject.url);
+            this.link.setAttribute('window', tabObject.winId);
+
+            this.link.style.backgroundColor = openTabsBackgroundColor;
+            this.link.style.color = openTabsTextColor;
+            this.link.onmouseenter = focusItem;
+            this.link.onfocus = focusItem;
+            this.link.onmouseleave = restoreOpenTab;
+            this.link.onblur = restoreOpenTab;
+        }
+    }
+    getLink() {
+        return this.link;
+    }
 }
