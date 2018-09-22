@@ -13,7 +13,7 @@ function saveOptions(e) {
         focusItemBorderColor: document.querySelector("#focusItemBorderColor").value,
         focusItemTextColor: document.querySelector("#focusItemTextColor").value,
 
-        scoreThreshold: document.querySelector("#scoreThreshold").value
+        scoreThreshold: transtlateThresholdValues()
     });
 }
 
@@ -32,7 +32,7 @@ function restoreOptions() {
         document.querySelector("#focusItemTextColor").value = result.focusItemTextColor || "black";
         document.querySelector("#focusItemBorderColor").value = result.focusItemBorderColor || "#0060DF";
 
-        document.querySelector("#scoreThreshold").value = result.scoreThreshold || "5000";
+        document.querySelector("#scoreThreshold").value = translateThresholdValues(result.scoreThreshold) || "5";
     }
 
     var getting = browser.storage.sync.get([
@@ -68,7 +68,7 @@ function resetOptions() {
     document.querySelector("#focusItemTextColor").value = "black";
     document.querySelector("#focusItemBorderColor").value = "#0060DF";
 
-    document.querySelector("#scoreThreshold").value = "5000";
+    document.querySelector("#scoreThreshold").value = "5";
 
     browser.storage.sync.set({
         bookmarkBackgroundColor: "#CEE5F8",
@@ -83,8 +83,25 @@ function resetOptions() {
         focusItemTextColor: "black",
         focusItemBorderColor: "#0060DF",
 
-        scoreThreshold: "5000"
+        scoreThreshold: -2000
     });
+}
+
+function transtlateThresholdValues() {
+    scoreSetting = parseInt(document.querySelector("#scoreThreshold").value)
+    console.log(scoreSetting);
+    switch (scoreSetting) {
+        case 1: return -100
+        case 2: return -200
+        case 3: return -500
+        case 4: return -1000
+        case 5: return -2000
+        case 6: return -5000
+        case 7: return -10000
+        case 8: return -20000
+        case 9: return -50000
+        case 10: return -Infinity
+    }
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);

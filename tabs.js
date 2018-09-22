@@ -41,14 +41,13 @@ var getting = browser.storage.sync.get([
 getting.then(setOptions);
 
 function searchResultTabs() {
-    console.log(tabsObjects);
 
     resultsTabsList.textContent = '';
     let searchQuery = document.getElementById("find-input").value;
 
     // Get matching tabs TODO Add option to customize threshold for scores
-    // console.log(scoreThreshold);
-    fuzzyResultsAll = fuzzysort.go(searchQuery, tabsObjects.map(a => a.title), { threshold: -200 });
+    console.log(scoreThreshold);
+    fuzzyResultsAll = fuzzysort.go(searchQuery, tabsObjects.map(a => a.title), { threshold: scoreThreshold });
 
     tabLink = document.createElement('a');
 
@@ -58,6 +57,7 @@ function searchResultTabs() {
         let link = new TabLink(currentTab);
         tabLink = link.getLink();
 
+        // console.log(tabLink)
         resultsTabsList.appendChild(tabLink);
     }
 
@@ -91,7 +91,6 @@ document.addEventListener("DOMContentLoaded", function (e) {
         var winId = +e.target.getAttribute('window');
         var bookmarkUrl = e.originalTarget.href;
 
-        // console.log(openTabId);
         if (Number.isInteger(openTabId)) {
             browser.windows.update(winId, {
                 focused: true
@@ -189,7 +188,7 @@ class TabLink {
 
             this.link.classList.add('open-tab-link')
             this.link.textContent = tabObject.title.slice(0, 64);
-            this.link.setAttribute('href', tabObject.url);
+            this.link.setAttribute('href', tabObject.id);
             this.link.setAttribute('window', tabObject.winId);
 
             this.link.style.backgroundColor = openTabsBackgroundColor;
