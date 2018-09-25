@@ -13,7 +13,7 @@ function saveOptions(e) {
         focusItemBorderColor: document.querySelector("#focusItemBorderColor").value,
         focusItemTextColor: document.querySelector("#focusItemTextColor").value,
 
-        scoreThreshold: transtlateThresholdValues()
+        scoreThreshold: translateThresholdValues(parseInt(document.querySelector("#scoreThreshold").value))
     });
 }
 
@@ -30,9 +30,10 @@ function restoreOptions() {
 
         document.querySelector("#focusItemBackgroundColor").value = result.focusItemBackgroundColor || "white";
         document.querySelector("#focusItemTextColor").value = result.focusItemTextColor || "black";
-        document.querySelector("#focusItemBorderColor").value = result.focusItemBorderColor || "#0060DF";
+        document.querySelector("#focusItemBorderColor").value = result.focusItemBorderColor.toString() || "#0060DF";
 
         document.querySelector("#scoreThreshold").value = translateThresholdValues(result.scoreThreshold) || "5";
+        document.querySelector("#rangeInput").value = translateThresholdValues(result.scoreThreshold) || "5";
     }
 
     var getting = browser.storage.sync.get([
@@ -51,7 +52,6 @@ function restoreOptions() {
         "scoreThreshold"
     ]);
     getting.then(setCurrentChoice);
-
 }
 
 function resetOptions() {
@@ -69,6 +69,7 @@ function resetOptions() {
     document.querySelector("#focusItemBorderColor").value = "#0060DF";
 
     document.querySelector("#scoreThreshold").value = "5";
+    document.querySelector("#rangeInput").value = "5";
 
     browser.storage.sync.set({
         bookmarkBackgroundColor: "#CEE5F8",
@@ -87,10 +88,9 @@ function resetOptions() {
     });
 }
 
-function transtlateThresholdValues() {
-    scoreSetting = parseInt(document.querySelector("#scoreThreshold").value)
-    console.log(scoreSetting);
-    switch (scoreSetting) {
+function translateThresholdValues(input) {
+    // scoreSetting = parseInt(document.querySelector("#scoreThreshold").value)
+    switch (input) {
         case 1: return -100
         case 2: return -200
         case 3: return -500
@@ -101,6 +101,16 @@ function transtlateThresholdValues() {
         case 8: return -20000
         case 9: return -50000
         case 10: return -Infinity
+        case -100: return 1
+        case -200: return 2
+        case -500: return 3
+        case -1000: return 4
+        case -2000: return 5
+        case -5000: return 6
+        case -10000: return 7
+        case -20000: return 8
+        case -50000: return 9
+        case -Infinity: return 10
     }
 }
 
